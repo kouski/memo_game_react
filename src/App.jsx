@@ -4,6 +4,9 @@ import MemoryCard from './components/MemoryCard'
 
 export default function App() {
     const [isGameOn, setIsGameOn] = useState(false)
+    const [emojisData, seEmojisData] = useState([])
+
+    console.log(emojisData);
     
     async function startGame(e) {
         e.preventDefault()
@@ -16,7 +19,8 @@ export default function App() {
           }
       
           const datos = await respuesta.json();  // Convertimos la respuesta a JSON
-          console.log(datos);
+          const dataSample = datos.slice(0,5)
+          seEmojisData(dataSample)
           setIsGameOn(true);  
         } catch (error) {
           console.error('Ocurrió un error:', error);
@@ -31,7 +35,7 @@ export default function App() {
         <main>
             <h1>Memory</h1>
             {!isGameOn && <Form handleSubmit={startGame} />}
-            {isGameOn && <MemoryCard handleClick={turnCard} />}
+            {isGameOn && <MemoryCard handleClick={turnCard} data={emojisData} />}
         </main>
     )
 }

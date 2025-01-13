@@ -19,13 +19,38 @@ export default function App() {
           }
       
           const datos = await respuesta.json();  // Convertimos la respuesta a JSON
-          const dataSample = datos.slice(0,5)
-          seEmojisData(dataSample)
+          const dataSlice = getDataSlice(datos)
+          console.log(getRandomIndices(datos));
+
+          seEmojisData(dataSlice)
           setIsGameOn(true);  
         } catch (error) {
           console.error('Ocurrió un error:', error);
         }
     }
+
+    function getDataSlice(datos) {
+      const randomIndices = getRandomIndices(datos)
+      
+      const dataSlice = randomIndices.map(index => datos[index])
+      
+      return dataSlice
+  }
+
+    function getRandomIndices(datos) {
+      const randomIndicesArray = []
+      
+      for (let i = 0; i < 5; i++) {
+          const randomNum = Math.floor(Math.random() * datos.length)
+          if (!randomIndicesArray.includes(randomNum)) {
+              randomIndicesArray.push(randomNum)
+          } else {
+              i--
+          }
+      }
+      
+      return randomIndicesArray
+  }
     
     function turnCard() {
         console.log("Memory card clicked")

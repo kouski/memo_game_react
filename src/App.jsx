@@ -4,9 +4,8 @@ import MemoryCard from './components/MemoryCard'
 
 export default function App() {
     const [isGameOn, setIsGameOn] = useState(false)
-    const [emojisData, seEmojisData] = useState([])
+    const [emojisData, setEmojisData] = useState([])
 
-    console.log(emojisData);
     
     async function startGame(e) {
         e.preventDefault()
@@ -19,17 +18,17 @@ export default function App() {
           }
       
           const datos = await respuesta.json();  // Convertimos la respuesta a JSON
-          const dataSlice = getDataSlice(datos)
-          console.log(getRandomIndices(datos));
+          const dataSlice =  getDataSlice(datos)
+          const emojisArray =  getEmojisArray(dataSlice)
 
-          seEmojisData(dataSlice)
+          setEmojisData(emojisArray)
           setIsGameOn(true);  
         } catch (error) {
           console.error('Ocurrió un error:', error);
         }
     }
 
-    function getDataSlice(datos) {
+     function getDataSlice(datos) {
       const randomIndices = getRandomIndices(datos)
       
       const dataSlice = randomIndices.map(index => datos[index])
@@ -47,10 +46,24 @@ export default function App() {
           } else {
               i--
           }
-      }
-      
+            
+        }
       return randomIndicesArray
+      
   }
+
+   function getEmojisArray(datos) {
+    const pairedEmojisArray = [...datos, ...datos]
+    
+    for (let i = pairedEmojisArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        const temp = pairedEmojisArray[i]
+        pairedEmojisArray[i] = pairedEmojisArray[j]
+        pairedEmojisArray[j] = temp
+    }
+    
+    return pairedEmojisArray
+}
     
     function turnCard() {
         console.log("Memory card clicked")
@@ -58,7 +71,7 @@ export default function App() {
     
     return (
         <main>
-            <h1>Memory</h1>
+            <h1>Juego de Memoria</h1>
             {!isGameOn && <Form handleSubmit={startGame} />}
             {isGameOn && <MemoryCard handleClick={turnCard} data={emojisData} />}
         </main>

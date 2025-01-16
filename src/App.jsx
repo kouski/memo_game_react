@@ -1,10 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Form from './components/Form'
 import MemoryCard from './components/MemoryCard'
 
 export default function App() {
     const [isGameOn, setIsGameOn] = useState(false)
     const [emojisData, setEmojisData] = useState([])
+    const [selectedCards, setSelectedCards] = useState([])
+    const [matchedCards, setMatchedCards] = useState([])
+
+console.log(matchedCards);
+    useEffect(()=>{
+        if (selectedCards.length === 2 && selectedCards[0].name === selectedCards[1].name) {
+            setMatchedCards(prevMatchedCards => [...prevMatchedCards, ...selectedCards])
+        }
+    },[selectedCards])
 
     
     async function startGame(e) {
@@ -16,6 +25,8 @@ export default function App() {
           if (!respuesta.ok) {
             throw new Error(`Error: ${respuesta.status}`);
           }
+
+          
       
           const datos = await respuesta.json();  // Convertimos la respuesta a JSON
           const dataSlice =  getDataSlice(datos)
@@ -64,10 +75,20 @@ export default function App() {
     
     return pairedEmojisArray
 }
+
+console.log(selectedCards);
     
-    function turnCard() {
-        console.log("Memory card clicked")
+function turnCard(name, index) {
+    
+    const selectedCardEntry = selectedCards.find(emoji=>emoji.index === index)
+    
+    if(!selectedCardEntry && selectedCards.length < 2){
+        setSelectedCards(prevSelectedCards => [...prevSelectedCards, { name, index }])
+    
+    }else if (!selectedCardEntry && selectedCards.length === 2){
+        setSelectedCards([{name,index}])
     }
+}
     
     return (
         <main>
